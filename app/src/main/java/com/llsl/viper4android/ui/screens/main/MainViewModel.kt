@@ -1519,7 +1519,8 @@ class MainViewModel
 
         fun queryDriverStatus() {
             val status = viperService?.probeDriverStatus()
-            if (status == null || status.versionCode <= 0) {
+            com.llsl.viper4android.utils.FileLogger.i("MainVM", "queryDriverStatus: status=$status")
+            if (status == null || (status.versionCode <= 0 && status.versionName.isEmpty())) {
                 if (driverStatus.value.installed) return
                 driverStatus.value = DriverStatus(installed = false)
                 return

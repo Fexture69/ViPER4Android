@@ -165,16 +165,27 @@ class ViperEffect(
         return bytes.toNullTerminatedString(fallback)
     }
 
-    fun getStatus(): DriverStatus =
-        DriverStatus(
-            enabled = enabled,
-            sampleRate = getIntParameter(ViperParams.PARAM_GET_SAMPLING_RATE),
-            processedFrames = getLongParameter(ViperParams.PARAM_GET_PROCESSED_FRAMES),
-            kernelId = getIntParameter(ViperParams.PARAM_GET_CONVOLUTION_KERNEL_ID),
-            versionCode = getIntParameter(ViperParams.PARAM_GET_DRIVER_VERSION_CODE),
-            versionName = getStringParameter(ViperParams.PARAM_GET_DRIVER_VERSION_NAME, 256, "-"),
-            arch = getStringParameter(ViperParams.PARAM_GET_ARCHITECTURE, 64, "Unknow"),
+    fun getStatus(): DriverStatus {
+        val sRate = getIntParameter(ViperParams.PARAM_GET_SAMPLING_RATE)
+        val frames = getLongParameter(ViperParams.PARAM_GET_PROCESSED_FRAMES)
+        val kId = getIntParameter(ViperParams.PARAM_GET_CONVOLUTION_KERNEL_ID)
+        val vCode = getIntParameter(ViperParams.PARAM_GET_DRIVER_VERSION_CODE)
+        val vName = getStringParameter(ViperParams.PARAM_GET_DRIVER_VERSION_NAME, 256, "-")
+        val arch = getStringParameter(ViperParams.PARAM_GET_ARCHITECTURE, 64, "Unknow")
+        FileLogger.i(
+            "Effect",
+            "getStatus: enabled=$enabled, vCode=$vCode, vName=$vName, arch=$arch, sRate=$sRate, frames=$frames, kId=$kId",
         )
+        return DriverStatus(
+            enabled = enabled,
+            sampleRate = sRate,
+            processedFrames = frames,
+            kernelId = kId,
+            versionCode = vCode,
+            versionName = vName,
+            arch = arch,
+        )
+    }
 
     private fun intToBytes(value: Int): ByteArray =
         ByteBuffer
