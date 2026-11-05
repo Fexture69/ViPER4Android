@@ -68,6 +68,7 @@ class AudioOutputDetector(
                 AudioDeviceInfo.TYPE_BLUETOOTH_SCO,
                 AudioDeviceInfo.TYPE_BLE_HEADSET,
                 AudioDeviceInfo.TYPE_BLE_BROADCAST,
+                AudioDeviceInfo.TYPE_BLE_SPEAKER,
                 AudioDeviceInfo.TYPE_HEARING_AID,
             )
 
@@ -77,6 +78,7 @@ class AudioOutputDetector(
                 AudioDeviceInfo.TYPE_BLUETOOTH_SCO,
                 AudioDeviceInfo.TYPE_BLE_HEADSET,
                 AudioDeviceInfo.TYPE_BLE_BROADCAST,
+                AudioDeviceInfo.TYPE_BLE_SPEAKER,
                 AudioDeviceInfo.TYPE_HEARING_AID,
             )
 

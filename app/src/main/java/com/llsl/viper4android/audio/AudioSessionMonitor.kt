@@ -19,6 +19,7 @@ class AudioSessionMonitor(
     private val activePiids = mutableMapOf<Int, SessionInfo>()
     private var registered = false
     private var pendingResolve = false
+    private var resolveRunnable: Runnable? = null
 
     private val isSystemPrivileged: Boolean by lazy {
         context.checkSelfPermission("android.permission.MODIFY_AUDIO_ROUTING") ==
@@ -54,15 +55,19 @@ class AudioSessionMonitor(
     }
 
     private fun handlePlaybackChange() {
-        if (pendingResolve) return
-        pendingResolve = true
-        Thread {
-            try {
-                resolveFromDumpsys()
-            } finally {
-                pendingResolve = false
-            }
-        }.start()
+        resolveRunnable?.let { mainHandler.removeCallbacks(it) }
+        resolveRunnable = Runnable {
+            if (pendingResolve) return@Runnable
+            pendingResolve = true
+            Thread {
+                try {
+                    resolveFromDumpsys()
+                } finally {
+                    pendingResolve = false
+                }
+            }.start()
+        }
+        mainHandler.postDelayed(resolveRunnable!!, 200L)
     }
 
     private fun resolveFromDumpsys() {
@@ -209,8 +214,8 @@ class AudioSessionMonitor(
         private const val TAG = "SessionMonitor"
         private const val DUMPSYS_TIMEOUT_SEC = 5L
 
-        private val PIID_PATTERN = Regex("""piid:(\d+)""")
-        private val SESSION_PATTERN = Regex("""session(?:Id)?:(\d+)""")
-        private val PACKAGE_PATTERN = Regex("""package:(\S+)""")
+        private val PIID_PATTERN = Regex("""piid:\s*(\d+)""", RegexOption.IGNORE_CASE)
+        private val SESSION_PATTERN = Regex("""(?:session(?:Id)?|sid):\s*(\d+)""", RegexOption.IGNORE_CASE)
+        private val PACKAGE_PATTERN = Regex("""(?:package|pkg):\s*(\S+)""", RegexOption.IGNORE_CASE)
     }
 }
